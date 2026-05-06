@@ -14,7 +14,7 @@ func NewAppService(app *application.App) *AppService {
 	return &AppService{}
 }
 
-func (a *AppService) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
+func (a *AppService) serviceStartup(ctx context.Context, options application.ServiceOptions) error {
 	return nil
 }
 

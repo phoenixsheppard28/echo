@@ -13,6 +13,7 @@ var assets embed.FS
 func main() {
 
 	app := application.New(application.Options{
+
 		Name: "echo",
 		Services: []application.Service{
 			application.NewService(&AppService{}),
