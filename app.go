@@ -6,20 +6,18 @@ import (
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
-type App struct {
-	app     *application.App
-	visible bool
+type AppService struct {
+	app *application.App
 }
 
-func NewApp() *App {
-	return &App{}
+func NewAppService(app *application.App) *AppService {
+	return &AppService{}
 }
 
-func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
-	a.visible = false
+func (a *AppService) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
 	return nil
 }
 
-func (a *App) ServiceShutdown() error {
+func (a *AppService) ServiceShutdown() error {
 	return nil
 }

@@ -11,24 +11,22 @@ import (
 var assets embed.FS
 
 func main() {
-	appService := NewApp()
 
 	app := application.New(application.Options{
 		Name: "echo",
 		Services: []application.Service{
-			application.NewService(appService),
+			application.NewService(&AppService{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
 	})
 
-	appService.app = app
-
 	_ = app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:  "My App",
-		Width:  1024,
-		Height: 768,
+		Title:       "My App",
+		Width:       1024,
+		Height:      768,
+		AlwaysOnTop: true,
 	})
 
 	if err := app.Run(); err != nil {
