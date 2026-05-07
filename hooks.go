@@ -76,8 +76,7 @@ func (s *hotkeyService) processHooks(ctx context.Context) {
 		case <-ctx.Done():
 			log.Printf("Term signal recieved")
 			return
-		case event := <-s.hotkeys[CLOSE].Keydown():
-			log.Printf("close event: %v", event)
+		case <-s.hotkeys[CLOSE].Keydown():
 			if w := s.targetWindow(); w != nil {
 				w.Hide()
 			}

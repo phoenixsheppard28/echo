@@ -4,4 +4,5 @@ is connected to my gcal so it can do it
 
 feed my prompt to chatgpt, generates a json with a calender schedule request then have the code do deterministic scheduling
 
-1. work on global shortcut bringing up interface
+1. work on global shortcut bringing up interface (done )
+2. next step
