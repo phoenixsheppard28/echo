@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/events"
 	"golang.design/x/hotkey"
 )
 
@@ -19,38 +20,81 @@ type hotkeyService struct {
 }
 
 // register all hooks
+//
+// IMPORTANT (macOS): Wails calls ServiceStartup on the main OS thread, before
+// NSApp's run loop is running. golang.design/x/hotkey's Register() internally
+// does dispatch_sync(dispatch_get_main_queue(), ...). Calling that from the
+// main thread itself is an immediate deadlock, which libdispatch traps as
+// SIGTRAP (the "trace trap" / signal-during-cgo crash we used to hit here).
+//
+// We therefore only build the Hotkey objects in ServiceStartup and defer the
+// actual Register() to events.Common.ApplicationStarted. Wails dispatches that
+// callback on a regular goroutine, so the cgo dispatch_sync to the main queue
+// can be serviced by the now-running main run loop.
 func (s *hotkeyService) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
-	var hks []*hotkey.Hotkey
-
-	s.hotkeys = make(map[uint]*hotkey.Hotkey)
-
-	hks = append(hks, hotkey.New([]hotkey.Modifier{}, hotkey.KeyEscape))
-	hks = append(hks, hotkey.New([]hotkey.Modifier{hotkey.ModCmd, hotkey.ModShift}, hotkey.KeyJ))
-
-	for idx, hk := range hks {
-		log.Printf("registering hotkey %d: %v", idx, hk)
-
-		err := hk.Register() // needs to happen in the main thread
-		log.Printf("finished registering hotkey %d, err=%v", idx, err)
-
-		if err != nil {
-			log.Fatalf("hotkey: failed to register hotkey: %v", err)
-			return err
-		}
-		s.hotkeys[uint(idx)] = hk
+	s.app = application.Get()
+	s.hotkeys = map[uint]*hotkey.Hotkey{
+		OPEN_CLOSE: hotkey.New([]hotkey.Modifier{hotkey.ModCmd, hotkey.ModShift}, hotkey.KeyJ),
+		CLOSE:      hotkey.New([]hotkey.Modifier{}, hotkey.KeyEscape),
 	}
-	return nil
 
+	s.app.Event.OnApplicationEvent(events.Common.ApplicationStarted, func(*application.ApplicationEvent) {
+		registered := 0
+		for idx, hk := range s.hotkeys {
+			if err := hk.Register(); err != nil {
+				log.Printf("hotkey: failed to register hotkey %d: %v", idx, err)
+				continue
+			}
+			log.Printf("hotkey: registered %d", idx)
+			registered++
+		}
+		if registered > 0 {
+			go s.processHooks(s.app.Context())
+		}
+	})
+
+	return nil
 }
 
-func (s *hotkeyService) processHooks() {
+// targetWindow returns the window the hotkeys should act on.
+//
+// Do NOT use s.app.Window.Current() for global hotkeys: the trigger almost
+// always happens while the app is in the background, so [NSApp keyWindow]
+// is nil, getCurrentWindowID() returns 0, and Current() returns nil.
+// Calling any method on that nil Window panics with SIGSEGV.
+// mught need to modify this
+func (s *hotkeyService) targetWindow() application.Window {
+	if all := s.app.Window.GetAll(); len(all) > 0 {
+		return all[0]
+	}
+	return nil
+}
+
+func (s *hotkeyService) processHooks(ctx context.Context) {
 	for {
 		select {
-		case <-s.hotkeys[CLOSE].Keydown():
-			s.app.Window.Current().Hide()
-
+		case <-ctx.Done():
+			log.Printf("Term signal recieved")
+			return
+		case event := <-s.hotkeys[CLOSE].Keydown():
+			log.Printf("close event: %v", event)
+			if w := s.targetWindow(); w != nil {
+				w.Hide()
+			}
 		case <-s.hotkeys[OPEN_CLOSE].Keydown():
-			s.app.Window.Current().Fullscreen()
+			w := s.targetWindow()
+
+			if w == nil {
+				log.Printf("hotkey: no window available to toggle")
+				continue
+			}
+			if w.IsVisible() {
+				w.Hide()
+			} else {
+				w.Show()
+				w.Focus()
+			}
+
 		}
 	}
 }
