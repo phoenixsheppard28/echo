@@ -22,19 +22,25 @@ type hotkeyService struct {
 func (s *hotkeyService) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
 	var hks []*hotkey.Hotkey
 
+	s.hotkeys = make(map[uint]*hotkey.Hotkey)
+
 	hks = append(hks, hotkey.New([]hotkey.Modifier{}, hotkey.KeyEscape))
 	hks = append(hks, hotkey.New([]hotkey.Modifier{hotkey.ModCmd, hotkey.ModShift}, hotkey.KeyJ))
 
 	for idx, hk := range hks {
-		err := hk.Register()
+		log.Printf("registering hotkey %d: %v", idx, hk)
+
+		err := hk.Register() // needs to happen in the main thread
+		log.Printf("finished registering hotkey %d, err=%v", idx, err)
+
 		if err != nil {
 			log.Fatalf("hotkey: failed to register hotkey: %v", err)
 			return err
 		}
 		s.hotkeys[uint(idx)] = hk
 	}
-	go s.processHooks()
 	return nil
+
 }
 
 func (s *hotkeyService) processHooks() {

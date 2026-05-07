@@ -15,7 +15,6 @@ func NewAppService(app *application.App) *AppService {
 }
 
 func (s *AppService) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
-
 	return nil
 }
 
