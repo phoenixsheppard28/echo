@@ -25,10 +25,22 @@ func main() {
 	// register keybindings for the app at the global level, shoud use a seperate service liek gohook, since t
 
 	_ = app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:       "My App",
-		Width:       500,
-		Height:      300,
-		AlwaysOnTop: true,
+		Title:          "Echo",
+		BackgroundType: application.BackgroundTypeTranslucent,
+		Width:          500,
+		Height:         300,
+		AlwaysOnTop:    true,
+		Frameless:      true,
+
+		Mac: application.MacWindow{
+			WindowLevel:             application.MacWindowLevelFloating,
+			TitleBar:                application.MacTitleBarHidden,
+			Backdrop:                application.MacBackdropTranslucent,
+			NonActivatingPanel:      true, // I DID THIS MYSELF LETS GOOOOOOO
+			InvisibleTitleBarHeight: 50,
+		},
+
+		HideOnFocusLost: true,
 	})
 
 	if err := app.Run(); err != nil {
