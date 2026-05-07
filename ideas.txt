@@ -8,7 +8,8 @@ feed my prompt to chatgpt, generates a json with a calender schedule request the
 2. next step, make it raycast style not focusing (done)
 3. wow what app was i even building
 4. work on making the system tray (abandon for now)
-5. 
+5. Oauth with gcal 
+6. ADK
 
 new website liek taht other one
 add open source to my personal website
