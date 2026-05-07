@@ -7,4 +7,9 @@ feed my prompt to chatgpt, generates a json with a calender schedule request the
 1. work on global shortcut bringing up interface (done )
 2. next step, make it raycast style not focusing (done)
 3. wow what app was i even building
-4. work on making the system tray
+4. work on making the system tray (abandon for now)
+5. 
+
+new website liek taht other one
+add open source to my personal website
+add tests later
