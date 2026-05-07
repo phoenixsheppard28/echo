@@ -36,6 +36,7 @@ func main() {
 			TitleBar:    application.MacTitleBarHidden,
 			Backdrop:    application.MacBackdropTranslucent,
 		},
+		HideOnFocusLost: true,
 	})
 
 	if err := app.Run(); err != nil {
