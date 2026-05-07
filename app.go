@@ -14,10 +14,11 @@ func NewAppService(app *application.App) *AppService {
 	return &AppService{}
 }
 
-func (a *AppService) serviceStartup(ctx context.Context, options application.ServiceOptions) error {
+func (s *AppService) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
+
 	return nil
 }
 
-func (a *AppService) ServiceShutdown() error {
+func (s *AppService) ServiceShutdown() error {
 	return nil
 }
