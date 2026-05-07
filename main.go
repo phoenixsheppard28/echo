@@ -21,8 +21,21 @@ func main() {
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
+		Mac: application.MacOptions{
+			ActivationPolicy: application.ActivationPolicyAccessory,
+		},
 	})
-	// register keybindings for the app at the global level, shoud use a seperate service liek gohook, since t
+
+	// systemTray := app.SystemTray.New()
+
+	// // Support for template icons on macOS
+	// if runtime.GOOS == "darwin" {
+	// 	systemTray.SetTemplateIcon(icons.SystrayMacTemplate)
+	// } else {
+	// 	// Support for light/dark mode icons
+	// 	systemTray.SetDarkModeIcon(icons.SystrayDark)
+	// 	systemTray.SetIcon(icons.SystrayLight)
+	// }
 
 	_ = app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:          "Echo",
