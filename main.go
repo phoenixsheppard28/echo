@@ -31,11 +31,15 @@ func main() {
 		Height:         300,
 		AlwaysOnTop:    true,
 		Frameless:      true,
+
 		Mac: application.MacWindow{
-			WindowLevel: application.MacWindowLevelFloating,
-			TitleBar:    application.MacTitleBarHidden,
-			Backdrop:    application.MacBackdropTranslucent,
+			WindowLevel:             application.MacWindowLevelFloating,
+			TitleBar:                application.MacTitleBarHidden,
+			Backdrop:                application.MacBackdropTranslucent,
+			NonActivatingPanel:      true, // I DID THIS MYSELF LETS GOOOOOOO
+			InvisibleTitleBarHeight: 50,
 		},
+
 		HideOnFocusLost: true,
 	})
 
