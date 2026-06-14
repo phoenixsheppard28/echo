@@ -90,8 +90,11 @@ func (s *hotkeyService) processHooks(ctx context.Context) {
 			if w.IsVisible() {
 				w.Hide()
 			} else {
+				w.SetSize(launcherWindowWidth, launcherWindowHeight)
+				w.Center()
 				w.Show()
 				w.Focus()
+				w.EmitEvent("echo:launcher")
 			}
 
 		}

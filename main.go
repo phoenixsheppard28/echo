@@ -29,16 +29,19 @@ func main() {
 	_ = app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:          "Echo",
 		BackgroundType: application.BackgroundTypeTranslucent,
-		Width:          500,
-		Height:         300,
+		Width:          launcherWindowWidth,
+		Height:         launcherWindowHeight,
+		MinWidth:       launcherWindowWidth,
+		MinHeight:      launcherWindowHeight,
 		AlwaysOnTop:    true,
 		Frameless:      true,
+		Hidden:         true,
 
 		Mac: application.MacWindow{
 			WindowLevel:             application.MacWindowLevelFloating,
 			TitleBar:                application.MacTitleBarHidden,
 			Backdrop:                application.MacBackdropTranslucent,
-			NonActivatingPanel:      true, // I DID THIS MYSELF LETS GOOOOOOO
+			NonActivatingPanel:      true,
 			InvisibleTitleBarHeight: 50,
 		},
 
